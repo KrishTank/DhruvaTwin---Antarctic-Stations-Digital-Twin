@@ -12,6 +12,7 @@
 
 import { StationId } from '../types';
 import { db } from '../db/dexieDb';
+import { appendAuditLog } from './auditService';
 
 export type SensorHealthStatus = 'NOMINAL' | 'PACKET_CORRUPTION' | 'FREEZE_LOCKUP' | 'DRIFT_ERROR' | 'MISSING_TELEMETRY';
 
@@ -47,6 +48,7 @@ const INITIAL_CHANNELS: TelemetryChannel[] = [
     currentValue: 'NaN °C (Freeze Lock)',
     nominalRange: '+1.5°C to +4.5°C',
     status: 'FREEZE_LOCKUP',
+    rawHexPacket: '0xFF 0x00 0xDE 0xAD 0x44 [ERR]',
     errorDescription: 'Thermistor bridge rime-ice lockup; analog readout stuck at open-circuit NaN.',
     position3D: [15, 2.5, -6]
   },
@@ -59,6 +61,7 @@ const INITIAL_CHANNELS: TelemetryChannel[] = [
     currentValue: '-4.2 bar (Parity Error)',
     nominalRange: '4.8 to 6.2 bar',
     status: 'PACKET_CORRUPTION',
+    rawHexPacket: '0xCC 0x31 0x00 0x88 0xEE [CRC]',
     errorDescription: 'Cyclic redundancy check (CRC-16) failed; dropped 14 consecutive telemetry frames.',
     position3D: [-28, 3.0, 24]
   },
@@ -71,6 +74,7 @@ const INITIAL_CHANNELS: TelemetryChannel[] = [
     currentValue: '+114.8°C (Sensor Drift)',
     nominalRange: '+75.0°C to +88.0°C',
     status: 'DRIFT_ERROR',
+    rawHexPacket: '0xAA 0x73 0x99 0x21 0x14 [DRIFT]',
     errorDescription: 'Analog-to-digital converter zero-point drift; +28°C uncompensated thermal offset.',
     position3D: [0, 8.5, 0]
   },
@@ -83,6 +87,7 @@ const INITIAL_CHANNELS: TelemetryChannel[] = [
     currentValue: '0.0 km/h (Deadlock)',
     nominalRange: '5.0 to 140.0 km/h',
     status: 'FREEZE_LOCKUP',
+    rawHexPacket: '0x00 0x00 0x00 0x00 0x00 [LOCK]',
     errorDescription: 'Sonic transducer rime accumulation detected; signal attenuation >32 dB.',
     position3D: [44, 18, 20]
   },
@@ -95,6 +100,7 @@ const INITIAL_CHANNELS: TelemetryChannel[] = [
     currentValue: '48.2 V',
     nominalRange: '46.0 to 52.0 V',
     status: 'NOMINAL',
+    rawHexPacket: '0xAA 0x14 0x7E 0x3E 0x90 [OK]',
     position3D: [-36, 2.0, -18]
   },
   {
@@ -106,6 +112,7 @@ const INITIAL_CHANNELS: TelemetryChannel[] = [
     currentValue: '74.2%',
     nominalRange: '20.0% to 95.0%',
     status: 'NOMINAL',
+    rawHexPacket: '0xBB 0x22 0x5C 0x4A 0x88 [OK]',
     position3D: [28, 2.5, -22]
   }
 ];
@@ -178,20 +185,12 @@ class TelemetryRepairService {
 
     // Log to IndexedDB Command Audit Trail with SHA-256 integrity
     try {
-      await db.command_logs.add({
-        id: `repair-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        operatorName: 'Autonomous Telemetry Repair Engine',
-        userRole: 'Station Commander',
-        commandType: 'SCADA_SENSOR_RECALIBRATION',
-        targetSubsystem: channel.component,
-        parameterChanged: channel.parameter,
-        previousValue: 'CORRUPTED',
-        newValue: repairedValue,
-        prevHash: 'telemetry-crc-repair-hash',
-        signatureHash: `sha256-repair-${Date.now().toString(16)}`,
-        station: channel.station
-      });
+      await appendAuditLog(
+        channel.station === 'maitri' ? 'MAITRI-SCADA-GATEWAY' : 'BHARATI-SCADA-GATEWAY',
+        'Autonomous Telemetry Repair Engine',
+        'SCADA_SENSOR_RECALIBRATION',
+        `Recalibrated ${channel.name} (${channel.parameter}) from degraded state to nominal: ${repairedValue}`
+      );
     } catch {
       // Non-blocking log
     }

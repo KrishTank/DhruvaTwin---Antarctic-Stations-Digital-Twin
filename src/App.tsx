@@ -29,6 +29,8 @@ import { ExpeditionLogsScreen } from './components/screens/ExpeditionLogsScreen'
 import { AuditTrailScreen } from './components/screens/AuditTrailScreen';
 import { AiContinuityScreen } from './components/screens/AiContinuityScreen';
 import { WeatherPage } from './pages/WeatherPage';
+import { LoginPage } from './pages/LoginPage';
+import { IndexPage } from './pages/IndexPage';
 
 // Overlays & Drawers
 import { AntarcticLayout } from './components/AntarcticUI/AntarcticLayout';
@@ -83,6 +85,9 @@ export type ScreenId =
   | 'audit';
 
 export default function App() {
+  // App-level view state: login → index → dashboard
+  const [appView, setAppView] = useState<'login' | 'index' | 'dashboard'>('login');
+
   // Navigation & Station State
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('twin');
   const [activeStation, setActiveStation] = useState<StationId>('maitri');
@@ -165,6 +170,34 @@ export default function App() {
   }, [isAntarcticMode]);
 
   const stationInfo = STATIONS_DATA[activeStation];
+
+  // ── LOGIN PAGE ──
+  if (appView === 'login') {
+    return (
+      <LoginPage
+        onLogin={(role) => {
+          setUserRole(role);
+          setAppView('index');
+        }}
+      />
+    );
+  }
+
+  // ── INDEX / HOME PAGE ──
+  if (appView === 'index') {
+    return (
+      <IndexPage
+        activeStation={activeStation}
+        userRole={userRole}
+        stationTemp={stationTemp}
+        stationWind={stationWind}
+        onEnterDashboard={(screen) => {
+          if (screen) setCurrentScreen(screen);
+          setAppView('dashboard');
+        }}
+      />
+    );
+  }
 
   return (
     <div className={`min-h-screen bg-[#060B14] text-[#E8EEF4] flex flex-col font-sans selection:bg-[#00E0C6]/30 ${
