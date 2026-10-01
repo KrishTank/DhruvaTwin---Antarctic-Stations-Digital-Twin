@@ -31,6 +31,7 @@ import { AiContinuityScreen } from './components/screens/AiContinuityScreen';
 import { WeatherPage } from './pages/WeatherPage';
 import { LoginPage } from './pages/LoginPage';
 import { IndexPage } from './pages/IndexPage';
+import { AntarcticLanding } from './components/AntarcticLanding/AntarcticLanding';
 
 // Overlays & Drawers
 import { AntarcticLayout } from './components/AntarcticUI/AntarcticLayout';
@@ -85,8 +86,8 @@ export type ScreenId =
   | 'audit';
 
 export default function App() {
-  // App-level view state: login → index → dashboard
-  const [appView, setAppView] = useState<'login' | 'index' | 'dashboard'>('login');
+  // App-level view state: landing → login → index → dashboard
+  const [appView, setAppView] = useState<'landing' | 'login' | 'index' | 'dashboard'>('landing');
 
   // Navigation & Station State
   const [currentScreen, setCurrentScreen] = useState<ScreenId>('twin');
@@ -170,6 +171,16 @@ export default function App() {
   }, [isAntarcticMode]);
 
   const stationInfo = STATIONS_DATA[activeStation];
+
+  // ── DHRUVATWIN ANTARCTIC LANDING PAGE ──
+  if (appView === 'landing') {
+    return (
+      <AntarcticLanding
+        onEnterDhruvaTwin={() => setAppView('login')}
+        stationTemp={stationTemp}
+      />
+    );
+  }
 
   // ── LOGIN PAGE ──
   if (appView === 'login') {

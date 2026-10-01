@@ -1,0 +1,1376 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ * 
+ * DhruvaTwin Antarctic Landing Page Isolated Stylesheet
+ * Optimized for full-screen 16:9 Desktop Command-Center experience
+ * 
+ * Layer Hierarchy:
+ * BACKGROUND (z-index: 0)
+ * ↓
+ * ANTARCTIC LANDSCAPE / PENGUINS / ICE (z-index: 1)
+ * ↓
+ * ATMOSPHERIC SNOW (z-index: 10)
+ * ↓
+ * ENVIRONMENT PANEL (z-index: 20)
+ * ↓
+ * FLOATING INFORMATION CARDS (z-index: 25)
+ * ↓
+ * HERO CONTENT / CTA (z-index: 30)
+ * ↓
+ * NAVIGATION (z-index: 40)
+ * 
+ * National Centre for Polar and Ocean Research (NCPOR) / MoES
+ * Smart India Hackathon 2026 - PS 26060 - Team HackFinity007
+ */
+
+/* ── Landing Page Root ── */
+.dhruva-landing-root {
+  --polar-navy-deep: #030712;
+  --polar-navy: #060B14;
+  --polar-navy-light: #0A121E;
+  --polar-navy-card: rgba(10, 18, 30, 0.85);
+  --glacier-blue: #4A9EFF;
+  --ice-blue: #A8D8EA;
+  --ice-cyan: #00E0C6;
+  --ice-teal: #00B4A0;
+  --frost-white: #F0F8FF;
+  --border-subtle: rgba(74, 158, 255, 0.15);
+  --border-cyan: rgba(0, 224, 198, 0.35);
+  --glass-shadow: 0 16px 40px 0 rgba(3, 7, 18, 0.65);
+  
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 600px;
+  overflow: hidden;
+  background-color: var(--polar-navy-deep);
+  color: var(--frost-white);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  user-select: none;
+  z-index: 0;
+}
+
+/* ── Top Navigation Bar (z-index: 40) ── */
+.dhruva-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  padding: 0 clamp(1.5rem, 3.5vw, 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(3, 7, 18, 0.92) 0%, rgba(6, 11, 20, 0.7) 75%, transparent 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 224, 198, 0.15);
+  z-index: 20;
+  box-sizing: border-box;
+}
+
+.dhruva-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.dhruva-nav-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.2), rgba(74, 158, 255, 0.12));
+  border: 1px solid rgba(0, 224, 198, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(0, 224, 198, 0.2);
+}
+
+.dhruva-nav-title {
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.dhruva-nav-subtitle {
+  font-size: 0.6875rem;
+  color: #8E9EAF;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.dhruva-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.dhruva-nav-link {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #94A3B8;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dhruva-nav-link:hover,
+.dhruva-nav-link.active {
+  color: #FFFFFF;
+  background: rgba(0, 224, 198, 0.08);
+  border-color: rgba(0, 224, 198, 0.3);
+  box-shadow: 0 0 12px rgba(0, 224, 198, 0.15);
+}
+
+.dhruva-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.dhruva-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(0, 224, 198, 0.08);
+  border: 1px solid rgba(0, 224, 198, 0.3);
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ice-cyan);
+}
+
+.dhruva-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--ice-cyan);
+  box-shadow: 0 0 8px var(--ice-cyan);
+  animation: dhruva-pulse 2s infinite ease-in-out;
+}
+
+.dhruva-enter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.55rem 1.25rem;
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.25) 0%, rgba(74, 158, 255, 0.2) 100%);
+  border: 1px solid rgba(0, 224, 198, 0.6);
+  border-radius: 10px;
+  color: #FFFFFF;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 224, 198, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dhruva-enter-btn:hover {
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.4) 0%, rgba(74, 158, 255, 0.35) 100%);
+  border-color: var(--ice-cyan);
+  box-shadow: 0 6px 25px rgba(0, 224, 198, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ── 16:9 Desktop Command-Center Shell (Between Nav and Bottom Bar) ── */
+.dhruva-desktop-shell {
+  position: absolute;
+  top: 72px; /* below nav */
+  bottom: 48px; /* above bottom telemetry */
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: calc(100vh - 72px - 48px);
+  pointer-events: none;
+  z-index: 5;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+/* ── Three-Zone Composition Container (Section 1 & 2) ── */
+.dhruva-three-zone-layout {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  box-sizing: border-box;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ── ZONE 1: LEFT 45% (Protected Hero Area & Lower Landscape Cards) ── */
+.dhruva-zone-left {
+  flex: 0 0 45%;
+  max-width: 45%;
+  width: 45%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: clamp(28px, 3.5vw, 60px);
+  padding-top: clamp(10px, 1.8vh, 24px);
+  padding-bottom: clamp(16px, 2.2vh, 24px); /* 15-25px separation from bottom telemetry */
+  box-sizing: border-box;
+  z-index: 7;
+  pointer-events: none;
+}
+
+/* Protected Hero Area (Section 3: Title, Subtitle, Description, Context, CTA) */
+.dhruva-hero-column {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  pointer-events: auto;
+  z-index: 7;
+}
+
+.dhruva-hero-container {
+  position: relative;
+  width: 100%;
+  animation: dhruva-fade-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dhruva-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(74, 158, 255, 0.12);
+  border: 1px solid rgba(74, 158, 255, 0.3);
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #70B5FF;
+  margin-bottom: 0.65rem;
+}
+
+.dhruva-hero-title {
+  font-size: clamp(2.4rem, 4.2vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 0.95;
+  background: linear-gradient(180deg, #FFFFFF 20%, #C4E3FD 70%, #70B5FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 30px rgba(0, 224, 198, 0.25));
+  margin-bottom: 0.45rem;
+}
+
+.dhruva-hero-subtitle {
+  font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #E2EDF8;
+  margin-bottom: 0.75rem;
+  line-height: 1.25;
+}
+
+.dhruva-hero-desc {
+  font-size: clamp(0.82rem, 1vw, 0.92rem);
+  line-height: 1.55;
+  color: #A6B7CC;
+  margin-bottom: 0.85rem;
+  max-width: 440px;
+}
+
+.dhruva-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #64748B;
+  text-transform: uppercase;
+  margin-bottom: 1.35rem; /* ~24-35px spacing between description and CTA */
+}
+
+.dhruva-hero-meta-dot {
+  color: var(--ice-cyan);
+}
+
+.dhruva-hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 8; /* Z-INDEX 8 for CTA (Section 11) */
+  pointer-events: auto;
+}
+
+.dhruva-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.6rem;
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.3) 0%, rgba(74, 158, 255, 0.25) 100%);
+  border: 1px solid var(--ice-cyan);
+  border-radius: 12px;
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0, 224, 198, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 8;
+  position: relative;
+}
+
+.dhruva-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.5) 0%, rgba(74, 158, 255, 0.4) 100%);
+  box-shadow: 0 10px 40px rgba(0, 224, 198, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.dhruva-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 1.35rem;
+  background: rgba(10, 18, 30, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #C4D3E5;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s ease;
+  z-index: 8;
+  position: relative;
+}
+
+.dhruva-btn-secondary:hover {
+  background: rgba(15, 27, 45, 0.85);
+  border-color: rgba(74, 158, 255, 0.4);
+  color: #FFFFFF;
+  box-shadow: 0 4px 20px rgba(74, 158, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ── Lower Information Cards (Zone 1: Lower Landscape, Section 8, Z-INDEX 6) ── */
+.dhruva-lower-cards-container {
+  position: relative;
+  width: 100%;
+  margin-top: auto; /* Pushes lower cards to bottom of Zone 1 */
+  padding-top: clamp(24px, 3.5vh, 45px); /* 30px+ clearance from CTA */
+  z-index: 6;
+  pointer-events: none;
+}
+
+.dhruva-lower-cards-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(25px, 3vh, 36px); /* 25-40px vertical gap (Section 8) */
+  width: 100%;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* 4. ICE & GLACIERS: Lower-left/middle, above bottom telemetry, completely visible */
+.dhruva-card-ice {
+  width: clamp(330px, 22vw, 410px);
+  align-self: flex-start;
+  z-index: 6;
+}
+
+/* 5. WILDLIFE SANCTUARY: Below ICE & GLACIERS, slightly offset horizontally */
+.dhruva-card-wildlife {
+  width: clamp(340px, 23vw, 420px);
+  align-self: flex-start;
+  margin-left: clamp(26px, 2.8vw, 46px); /* subtle horizontal offset (Section 8) */
+  z-index: 6;
+}
+
+/* ── ZONE 2: CENTER 25% (Top Floating Research Cards Stack, Section 4 & 5, Z-INDEX 6) ── */
+.dhruva-zone-center {
+  flex: 0 0 25%;
+  max-width: 25%;
+  width: 25%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: clamp(10px, 1.8vh, 22px);
+  box-sizing: border-box;
+  z-index: 6;
+  pointer-events: none;
+}
+
+/* Top Floating Cards Cluster (Section 4 & 5: Controlled staggered stack) */
+.dhruva-top-cards-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2.5vh, 28px); /* 20-30px minimum gap between cards */
+  width: 100%;
+  align-items: center;
+  position: relative;
+  z-index: 6;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+/* 1. 46TH ISEA RESEARCH: upper-center, below nav, approx 420-520px wide, center/right offset */
+.dhruva-card-isea {
+  width: clamp(380px, 25vw, 490px);
+  align-self: center;
+  transform: translateX(clamp(12px, 1.2vw, 24px));
+  z-index: 6;
+}
+
+/* 2. CLIMATE SENSORS: directly below ISEA, 20-30px gap, approx 360-480px wide, slightly left offset */
+.dhruva-card-climate {
+  width: clamp(340px, 22vw, 440px);
+  align-self: center;
+  transform: translateX(clamp(-22px, -1.5vw, -12px));
+  z-index: 6;
+}
+
+/* 3. MAITRI BASE • OPERATIONAL: below Climate Sensors, 20-30px gap, approx 420-500px wide, slightly right offset */
+.dhruva-card-maitri {
+  width: clamp(370px, 24vw, 480px);
+  align-self: center;
+  transform: translateX(clamp(16px, 1.4vw, 28px));
+  z-index: 6;
+}
+
+/* Interactive Penguin Hover Tooltip (Z-INDEX 6) */
+.dhruva-penguin-tooltip {
+  position: absolute;
+  bottom: clamp(60px, 9vh, 95px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.65rem 1.1rem;
+  background: rgba(4, 9, 18, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--ice-cyan);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 224, 198, 0.3);
+  z-index: 6;
+  cursor: pointer;
+  pointer-events: auto;
+  animation: dhruva-bounce 3s infinite ease-in-out;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ── ZONE 3: RIGHT 30% (Dedicated Antarctic Environment Panel, Section 6, Z-INDEX 5) ── */
+.dhruva-zone-right {
+  flex: 0 0 30%;
+  max-width: 30%;
+  width: 30%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding-right: clamp(30px, 2.8vw, 50px); /* 30-50px right margin (Section 6) */
+  padding-top: clamp(10px, 1.8vh, 22px);
+  box-sizing: border-box;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.dhruva-dashboard-column {
+  width: 100%;
+  max-width: clamp(290px, 21vw, 350px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vh, 18px);
+  pointer-events: auto;
+  z-index: 5;
+  box-sizing: border-box;
+}
+
+/* Antarctic Environment Status Panel (Section 6: Primary UI Component) */
+.dhruva-env-panel {
+  position: relative;
+  width: 100%;
+  padding: 1.1rem 1.35rem;
+  background: rgba(8, 15, 26, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(0, 224, 198, 0.35);
+  border-radius: 14px;
+  z-index: 5;
+  box-shadow: var(--glass-shadow), 0 0 20px rgba(0, 224, 198, 0.08);
+  pointer-events: auto;
+  animation: dhruva-fade-slide-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+}
+
+.dhruva-env-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.55rem;
+}
+
+.dhruva-env-title {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8CA0BA;
+}
+
+.dhruva-env-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  padding: 0.22rem 0;
+}
+
+.dhruva-env-label {
+  color: #64748B;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.dhruva-env-value {
+  color: #E2EDF8;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.dhruva-env-value.cyan {
+  color: var(--ice-cyan);
+}
+
+/* Digital Twin Telemetry Glass Control Panel */
+.dhruva-glass-panel {
+  position: relative;
+  width: 100%;
+  padding: 1.2rem 1.4rem;
+  background: rgba(8, 15, 26, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 224, 198, 0.25);
+  border-radius: 16px;
+  box-shadow: var(--glass-shadow), 0 0 30px rgba(0, 224, 198, 0.08);
+  z-index: 5;
+  pointer-events: auto;
+  animation: dhruva-fade-slide-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+}
+
+.dhruva-glass-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.dhruva-glass-badge {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ice-cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dhruva-glass-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--ice-cyan);
+  box-shadow: 0 0 6px var(--ice-cyan);
+}
+
+.dhruva-glass-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  margin-bottom: 0.35rem;
+}
+
+.dhruva-glass-desc {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #94A3B8;
+  margin-bottom: 1rem;
+}
+
+.dhruva-pills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1.15rem;
+}
+
+.dhruva-telemetry-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.65rem;
+  background: rgba(14, 25, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #D1E0F0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dhruva-telemetry-pill:hover {
+  background: rgba(0, 224, 198, 0.12);
+  border-color: rgba(0, 224, 198, 0.4);
+  color: #FFFFFF;
+  box-shadow: 0 2px 12px rgba(0, 224, 198, 0.15);
+  transform: translateY(-1px);
+}
+
+.dhruva-telemetry-pill.active {
+  background: rgba(0, 224, 198, 0.18);
+  border-color: var(--ice-cyan);
+  color: var(--ice-cyan);
+  box-shadow: 0 0 16px rgba(0, 224, 198, 0.25);
+}
+
+/* ── Unified Floating HUD Cards (Consistent Geometry, Section 4 & 5, Z-INDEX 6) ── */
+.dhruva-hud-card {
+  pointer-events: auto;
+  position: relative;
+  min-height: 56px;
+  height: auto;
+  padding: 0.7rem 1.2rem;
+  background: rgba(8, 16, 28, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 224, 198, 0.35);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(3, 7, 18, 0.75), 0 0 16px rgba(0, 224, 198, 0.12);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  white-space: nowrap;
+  z-index: 6;
+}
+
+.dhruva-hud-card:hover {
+  background: rgba(11, 23, 40, 0.96);
+  border-color: var(--ice-cyan);
+  box-shadow: 0 12px 32px rgba(3, 7, 18, 0.85), 0 0 24px rgba(0, 224, 198, 0.3);
+  transform: translateY(-2px) scale(1.015);
+}
+
+.dhruva-hud-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dhruva-card-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.dhruva-card-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  flex: 1;
+}
+
+.dhruva-card-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--ice-cyan);
+  box-shadow: 0 0 6px var(--ice-cyan);
+}
+
+.dhruva-card-status-dot.pulse {
+  animation: dhruva-pulse 2s infinite ease-in-out;
+}
+
+.dhruva-hud-card-body {
+  font-size: 0.66rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--ice-cyan);
+  margin-top: 3px;
+  letter-spacing: 0.03em;
+}
+
+/* ── Bottom Telemetry Bar (z-index: 40) ── */
+.dhruva-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  padding: 0 clamp(1.5rem, 3.5vw, 3.5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(0deg, rgba(3, 7, 18, 0.95) 0%, rgba(6, 11, 20, 0.8) 75%, transparent 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-sizing: border-box;
+}
+
+.dhruva-telemetry-metrics {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.dhruva-metric-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dhruva-metric-label {
+  color: #64748B;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.dhruva-metric-val {
+  color: #E2EDF8;
+  font-weight: 800;
+}
+
+.dhruva-metric-val.highlight {
+  color: var(--ice-cyan);
+}
+
+.dhruva-coords {
+  color: #8E9EAF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+}
+
+/* ── Modals (z-index: 100) ── */
+.dhruva-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 12, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1.5rem;
+  animation: dhruva-fade-in 0.25s ease-out forwards;
+}
+
+.dhruva-modal-card {
+  width: 100%;
+  max-width: 580px;
+  background: #0A121E;
+  border: 1px solid rgba(0, 224, 198, 0.35);
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 224, 198, 0.15);
+  overflow: hidden;
+  animation: dhruva-modal-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dhruva-modal-header {
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(90deg, rgba(0, 224, 198, 0.1) 0%, rgba(74, 158, 255, 0.05) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dhruva-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #8E9EAF;
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dhruva-modal-close-btn:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dhruva-modal-body {
+  padding: 1.5rem;
+}
+
+/* ── Keyframes & Animations ── */
+@keyframes dhruva-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 8px var(--ice-cyan);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+    box-shadow: 0 0 2px var(--ice-cyan);
+  }
+}
+
+@keyframes dhruva-fade-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dhruva-fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes dhruva-modal-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes dhruva-bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-6px);
+  }
+}
+
+/* ── Interactive Penguin Focus Controller (Moving One to Another) ── */
+.dhruva-penguin-focus-bar {
+  position: fixed;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(8, 18, 34, 0.92);
+  border: 1px solid rgba(0, 224, 198, 0.38);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(0, 224, 198, 0.18);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 9999px;
+  padding: 8px 18px 8px 14px;
+  animation: dhruva-modal-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: auto;
+}
+
+.dhruva-focus-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 224, 198, 0.12);
+  border: 1px solid rgba(0, 224, 198, 0.3);
+  border-radius: 9999px;
+  padding: 4px 10px;
+}
+
+.dhruva-focus-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.dhruva-focus-counter {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--dhruva-font-mono);
+  color: #00E0C6;
+  letter-spacing: 0.05em;
+}
+
+.dhruva-focus-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 170px;
+}
+
+.dhruva-focus-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.dhruva-focus-desc {
+  font-size: 10px;
+  color: rgba(180, 210, 240, 0.75);
+  white-space: nowrap;
+}
+
+.dhruva-focus-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dhruva-focus-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #DDEAF8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.dhruva-focus-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.dhruva-focus-btn-primary {
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.25), rgba(74, 158, 255, 0.2));
+  border-color: rgba(0, 224, 198, 0.45);
+  color: #00E0C6;
+}
+
+.dhruva-focus-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(0, 224, 198, 0.4), rgba(74, 158, 255, 0.35));
+  border-color: #00E0C6;
+  color: #FFFFFF;
+  box-shadow: 0 0 12px rgba(0, 224, 198, 0.3);
+}
+
+.dhruva-focus-btn-close {
+  background: rgba(255, 100, 100, 0.1);
+  border-color: rgba(255, 100, 100, 0.25);
+  color: #FFAAAA;
+}
+
+.dhruva-focus-btn-close:hover {
+  background: rgba(255, 100, 100, 0.22);
+  border-color: rgba(255, 100, 100, 0.5);
+  color: #FFFFFF;
+}
+
+/* Quick observe pill trigger */
+.dhruva-quick-observe-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 25, 45, 0.75);
+  border: 1px solid rgba(0, 224, 198, 0.3);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  color: #CBE4FF;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.dhruva-quick-observe-pill:hover {
+  background: rgba(0, 224, 198, 0.18);
+  border-color: #00E0C6;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 224, 198, 0.25);
+}
+
+/* ── Accessibility & Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .dhruva-hero-container,
+  .dhruva-glass-panel,
+  .dhruva-env-panel,
+  .dhruva-modal-card,
+  .dhruva-modal-overlay {
+    animation: none !important;
+  }
+  .dhruva-status-dot,
+  .dhruva-penguin-tooltip {
+    animation: none !important;
+  }
+}
+
+/* ── Responsive Adaptations for Desktop Resolutions (Section 1, 14 & 15) ── */
+/* 1920×1080: Full cinematic composition */
+
+/* 1600×900: Smooth scaling and proportional card offsets */
+@media (max-width: 1600px) {
+  .dhruva-card-isea {
+    width: clamp(360px, 24vw, 450px);
+    transform: translateX(clamp(8px, 1vw, 16px));
+  }
+  .dhruva-card-climate {
+    width: clamp(330px, 21vw, 410px);
+    transform: translateX(clamp(-16px, -1.2vw, -10px));
+  }
+  .dhruva-card-maitri {
+    width: clamp(350px, 23vw, 440px);
+    transform: translateX(clamp(12px, 1.1vw, 18px));
+  }
+  .dhruva-card-ice {
+    width: clamp(310px, 21vw, 380px);
+  }
+  .dhruva-card-wildlife {
+    width: clamp(320px, 22vw, 390px);
+    margin-left: clamp(20px, 2.2vw, 36px);
+  }
+}
+
+/* 1440×900: Balanced desktop spacing */
+@media (max-width: 1440px) {
+  .dhruva-zone-left {
+    padding-left: clamp(24px, 2.8vw, 42px);
+  }
+  .dhruva-zone-right {
+    padding-right: clamp(24px, 2.5vw, 40px);
+  }
+  .dhruva-dashboard-column {
+    max-width: clamp(270px, 21vw, 320px);
+  }
+  .dhruva-card-isea {
+    width: clamp(340px, 23vw, 420px);
+    transform: translateX(8px);
+  }
+  .dhruva-card-climate {
+    width: clamp(310px, 20vw, 380px);
+    transform: translateX(-12px);
+  }
+  .dhruva-card-maitri {
+    width: clamp(330px, 22vw, 410px);
+    transform: translateX(12px);
+  }
+  .dhruva-card-ice {
+    width: clamp(290px, 20vw, 360px);
+  }
+  .dhruva-card-wildlife {
+    width: clamp(300px, 21vw, 370px);
+    margin-left: clamp(16px, 2vw, 28px);
+  }
+}
+
+/* 1366×768: Tightened cards and adjusted zones */
+@media (max-width: 1366px) {
+  .dhruva-zone-left {
+    flex: 0 0 46%;
+    max-width: 46%;
+    width: 46%;
+    padding-left: clamp(20px, 2.2vw, 32px);
+  }
+  .dhruva-zone-center {
+    flex: 0 0 25%;
+    max-width: 25%;
+    width: 25%;
+  }
+  .dhruva-zone-right {
+    flex: 0 0 29%;
+    max-width: 29%;
+    width: 29%;
+    padding-right: clamp(20px, 2.2vw, 35px);
+  }
+  .dhruva-hero-title {
+    font-size: clamp(2.2rem, 3.8vw, 3.4rem);
+  }
+  .dhruva-hero-subtitle {
+    font-size: clamp(0.9rem, 1.25vw, 1.1rem);
+  }
+  .dhruva-dashboard-column {
+    max-width: clamp(260px, 21vw, 300px);
+  }
+  .dhruva-card-isea {
+    width: clamp(320px, 22vw, 380px);
+    transform: translateX(6px);
+  }
+  .dhruva-card-climate {
+    width: clamp(290px, 19vw, 350px);
+    transform: translateX(-8px);
+  }
+  .dhruva-card-maitri {
+    width: clamp(310px, 21vw, 370px);
+    transform: translateX(8px);
+  }
+  .dhruva-card-ice {
+    width: clamp(280px, 19vw, 340px);
+  }
+  .dhruva-card-wildlife {
+    width: clamp(290px, 20vw, 350px);
+    margin-left: clamp(14px, 1.6vw, 22px);
+  }
+}
+
+/* 1280×720: Clean compact card widths and inwards movement */
+@media (max-width: 1280px) {
+  .dhruva-zone-left {
+    flex: 0 0 47%;
+    max-width: 47%;
+    width: 47%;
+    padding-left: 20px;
+  }
+  .dhruva-zone-center {
+    flex: 0 0 25%;
+    max-width: 25%;
+    width: 25%;
+  }
+  .dhruva-zone-right {
+    flex: 0 0 28%;
+    max-width: 28%;
+    width: 28%;
+    padding-right: 20px;
+  }
+  .dhruva-top-cards-cluster {
+    gap: 18px;
+  }
+  .dhruva-lower-cards-cluster {
+    gap: 18px;
+  }
+  .dhruva-card-isea {
+    width: 310px;
+    transform: translateX(0);
+  }
+  .dhruva-card-climate {
+    width: 280px;
+    transform: translateX(0);
+  }
+  .dhruva-card-maitri {
+    width: 300px;
+    transform: translateX(0);
+  }
+  .dhruva-card-ice {
+    width: 270px;
+  }
+  .dhruva-card-wildlife {
+    width: 280px;
+    margin-left: 12px;
+  }
+  .dhruva-dashboard-column {
+    max-width: 270px;
+  }
+}
+
+/* Height Adaptations (for 768p and 720p viewports) */
+@media (max-height: 840px) {
+  .dhruva-zone-left {
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+  .dhruva-zone-center {
+    padding-top: 8px;
+  }
+  .dhruva-zone-right {
+    padding-top: 8px;
+  }
+  .dhruva-hero-pill {
+    margin-bottom: 0.4rem;
+  }
+  .dhruva-hero-title {
+    margin-bottom: 0.35rem;
+  }
+  .dhruva-hero-subtitle {
+    margin-bottom: 0.5rem;
+  }
+  .dhruva-hero-desc {
+    margin-bottom: 0.6rem;
+  }
+  .dhruva-hero-meta {
+    margin-bottom: 0.95rem;
+  }
+  .dhruva-btn-primary,
+  .dhruva-btn-secondary {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.8125rem;
+  }
+  .dhruva-top-cards-cluster {
+    gap: 18px;
+  }
+  .dhruva-lower-cards-cluster {
+    gap: 18px;
+  }
+  .dhruva-lower-cards-container {
+    padding-top: 18px;
+  }
+  .dhruva-hud-card {
+    min-height: 50px;
+    padding: 0.5rem 1rem;
+  }
+  .dhruva-card-title {
+    font-size: 0.68rem;
+  }
+  .dhruva-hud-card-body {
+    font-size: 0.62rem;
+  }
+  .dhruva-env-panel {
+    padding: 0.85rem 1.15rem;
+  }
+  .dhruva-glass-panel {
+    padding: 0.9rem 1.15rem;
+  }
+  .dhruva-glass-desc {
+    display: none;
+  }
+  .dhruva-pills-grid {
+    margin-bottom: 0.65rem;
+  }
+}
+
+@media (max-height: 740px) {
+  .dhruva-top-cards-cluster {
+    gap: 14px;
+  }
+  .dhruva-lower-cards-cluster {
+    gap: 14px;
+  }
+  .dhruva-hud-card {
+    min-height: 46px;
+    padding: 0.45rem 0.9rem;
+  }
+  .dhruva-dashboard-column {
+    gap: 10px;
+  }
+  .dhruva-telemetry-pill {
+    padding: 0.38rem 0.5rem;
+    font-size: 0.68rem;
+  }
+}
+
+/* Fallback for smaller screens */
+@media (max-width: 1024px) {
+  .dhruva-desktop-shell {
+    position: relative;
+    top: 0;
+    bottom: auto;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+    gap: 2rem;
+    padding: 85px 1.5rem 60px 1.5rem;
+    pointer-events: auto;
+  }
+  .dhruva-three-zone-layout {
+    flex-direction: column;
+    height: auto;
+    gap: 2rem;
+  }
+  .dhruva-zone-left,
+  .dhruva-zone-center,
+  .dhruva-zone-right {
+    flex: 0 0 100%;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    padding: 0;
+    align-items: center;
+  }
+  .dhruva-hero-column {
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+  .dhruva-hero-desc {
+    max-width: 100%;
+  }
+  .dhruva-hero-meta {
+    justify-content: center;
+  }
+  .dhruva-hero-actions {
+    justify-content: center;
+  }
+  .dhruva-lower-cards-container {
+    margin-top: 1.5rem;
+  }
+  .dhruva-lower-cards-cluster,
+  .dhruva-top-cards-cluster {
+    align-items: center;
+    gap: 16px;
+  }
+  .dhruva-card-isea,
+  .dhruva-card-climate,
+  .dhruva-card-maitri,
+  .dhruva-card-ice,
+  .dhruva-card-wildlife {
+    align-self: center;
+    margin: 0;
+    transform: none;
+    width: 100%;
+    max-width: 380px;
+  }
+  .dhruva-dashboard-column {
+    max-width: 380px;
+    align-items: center;
+  }
+  .dhruva-nav-links {
+    display: none;
+  }
+}
