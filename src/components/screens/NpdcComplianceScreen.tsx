@@ -40,9 +40,10 @@ import {
 
 interface NpdcComplianceScreenProps {
   activeStation: StationId;
+  userRole?: string;
 }
 
-export const NpdcComplianceScreen: React.FC<NpdcComplianceScreenProps> = ({ activeStation }) => {
+export const NpdcComplianceScreen: React.FC<NpdcComplianceScreenProps> = ({ activeStation, userRole }) => {
   const [copied, setCopied] = useState(false);
   const [showSnapshotModal, setShowSnapshotModal] = useState(false);
   const [passphrase, setPassphrase] = useState('NCPOR-ISEA46-ANTARCTIC-SECURE-2026');

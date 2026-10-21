@@ -15,9 +15,10 @@ import { Activity, Heart, Moon, Radio, Shield, Thermometer, Users, Wind } from '
 
 interface StationDashboardScreenProps {
   activeStation: StationId;
+  userRole?: string;
 }
 
-export const StationDashboardScreen: React.FC<StationDashboardScreenProps> = ({ activeStation }) => {
+export const StationDashboardScreen: React.FC<StationDashboardScreenProps> = ({ activeStation, userRole }) => {
   const [personnel, setPersonnel] = useState<PersonnelRecord[]>([]);
   const [filterShift, setFilterShift] = useState<string>('ALL');
 

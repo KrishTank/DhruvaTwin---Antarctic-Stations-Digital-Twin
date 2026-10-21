@@ -13,11 +13,25 @@ import { STATIONS_DATA } from '../../data/stationConstants';
 import { Compass, Globe, Radio, Shield, Signal, Wind, Zap } from 'lucide-react';
 
 interface AntarcticaOverviewScreenProps {
-  onStationSelect: (station: StationId) => void;
+  activeStation?: StationId;
+  onStationSelect?: (station: StationId) => void;
+  onSelectStation?: (station: StationId) => void;
 }
 
-export const AntarcticaOverviewScreen: React.FC<AntarcticaOverviewScreenProps> = ({ onStationSelect }) => {
+export const AntarcticaOverviewScreen: React.FC<AntarcticaOverviewScreenProps> = ({ 
+  activeStation,
+  onStationSelect, 
+  onSelectStation 
+}) => {
   const stationList = Object.values(STATIONS_DATA);
+
+  const handleSelect = (stationId: StationId) => {
+    if (onSelectStation) {
+      onSelectStation(stationId);
+    } else if (onStationSelect) {
+      onStationSelect(stationId);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -37,12 +51,17 @@ export const AntarcticaOverviewScreen: React.FC<AntarcticaOverviewScreenProps> =
           const isOperational = st.status === 'Operational';
           const isHistorical = st.status === 'Historical';
           const isPlanned = st.status === 'Planned';
+          const isCurrentActive = activeStation === st.id;
 
           return (
             <div
               key={st.id}
-              onClick={() => onStationSelect(st.id)}
-              className="p-5 bg-[#0A121E] rounded-xl border border-[#1A2533] hover:border-[#00E0C6] transition-all cursor-pointer flex flex-col justify-between"
+              onClick={() => handleSelect(st.id)}
+              className={`p-5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+                isCurrentActive
+                  ? 'bg-[#00E0C6]/10 border-[#00E0C6] shadow-[0_0_20px_rgba(0,224,198,0.2)]'
+                  : 'bg-[#0A121E] border-[#1A2533] hover:border-[#00E0C6]/60'
+              }`}
             >
               <div>
                 <div className="flex items-center justify-between">
@@ -115,7 +134,7 @@ export const AntarcticaOverviewScreen: React.FC<AntarcticaOverviewScreenProps> =
 
             {/* Maitri Node (NW sector) */}
             <div 
-              onClick={() => onStationSelect('maitri')}
+              onClick={() => handleSelect('maitri')}
               className="absolute top-16 left-32 group cursor-pointer flex flex-col items-center"
             >
               <div className="w-4 h-4 rounded-full bg-[#00E0C6] shadow-[0_0_12px_#00E0C6] group-hover:scale-125 transition-transform" />
@@ -126,7 +145,7 @@ export const AntarcticaOverviewScreen: React.FC<AntarcticaOverviewScreenProps> =
 
             {/* Bharati Node (E sector) */}
             <div 
-              onClick={() => onStationSelect('bharati')}
+              onClick={() => handleSelect('bharati')}
               className="absolute top-28 right-28 group cursor-pointer flex flex-col items-center"
             >
               <div className="w-4 h-4 rounded-full bg-[#3EE07F] shadow-[0_0_12px_#3EE07F] group-hover:scale-125 transition-transform" />

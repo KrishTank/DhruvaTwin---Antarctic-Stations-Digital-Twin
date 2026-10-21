@@ -12,7 +12,14 @@ import { NcporDocument } from '../../types';
 import { db } from '../../db/dexieDb';
 import { BookOpen, Download, ExternalLink, FileText, Filter, Search } from 'lucide-react';
 
-export const NcporLibraryScreen: React.FC = () => {
+import { StationId } from '../../types';
+
+interface NcporLibraryScreenProps {
+  activeStation?: StationId;
+  userRole?: string;
+}
+
+export const NcporLibraryScreen: React.FC<NcporLibraryScreenProps> = ({ activeStation = 'maitri', userRole = 'Admin' }) => {
   const [documents, setDocuments] = useState<NcporDocument[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');

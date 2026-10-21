@@ -17,10 +17,12 @@ import {
   CloudSnow,
   Globe2,
   Layers,
+  LogOut,
   RefreshCw,
   Shield,
   ShieldAlert,
   Snowflake,
+  Sparkles,
   Thermometer,
   Wind,
   Zap,
@@ -38,6 +40,9 @@ interface IndexPageProps {
   stationTemp: number;
   stationWind: number;
   onEnterDashboard: (screen?: ScreenId) => void;
+  onStationSelect?: (station: StationId) => void;
+  onView3DLanding?: () => void;
+  onLogout?: () => void;
 }
 
 const PRIORITY_STYLES: Record<SuggestionPriority, {
@@ -82,6 +87,9 @@ export const IndexPage: React.FC<IndexPageProps> = ({
   stationTemp,
   stationWind,
   onEnterDashboard,
+  onStationSelect,
+  onView3DLanding,
+  onLogout,
 }) => {
   const [aiState, setAiState] = useState<AiPredictorState>(aiPredictor.getState());
   const [suggestions, setSuggestions] = useState<StationAiSummary | null>(null);
@@ -137,6 +145,90 @@ export const IndexPage: React.FC<IndexPageProps> = ({
   return (
     <div className="min-h-screen bg-[#060B14] text-[#E8EEF4] overflow-x-hidden">
 
+      {/* Top Header Bar */}
+      <header className="h-16 px-4 sm:px-6 lg:px-12 bg-[#0A121E]/95 backdrop-blur-md border-b border-[#1A2533] flex items-center justify-between sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00E0C6] to-[#0A121E] p-[1.5px] flex items-center justify-center">
+            <div className="w-full h-full bg-[#060B14] rounded-[7px] flex items-center justify-center">
+              <Globe2 className="w-4 h-4 text-[#00E0C6]" />
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-base font-extrabold uppercase tracking-wider font-heading text-white">
+                Dhruva<span className="text-[#00E0C6]">Twin</span>
+              </span>
+              <span className="text-[10px] font-mono text-[#00E0C6] bg-[#00E0C6]/10 px-1.5 py-0.5 rounded border border-[#00E0C6]/30 hidden sm:inline">
+                Welcome Hub
+              </span>
+            </div>
+            <div className="text-[10px] text-[#6B7A8F] leading-none hidden sm:block">
+              NCPOR / MoES Govt. of India · Team HackFinity007
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {/* Station Switcher */}
+          {onStationSelect && (
+            <div className="flex items-center gap-1 bg-[#060B14] p-1 rounded-lg border border-[#1A2533] text-xs">
+              <button
+                onClick={() => onStationSelect('maitri')}
+                className={`px-2.5 py-1 rounded font-bold uppercase transition-all cursor-pointer ${
+                  activeStation === 'maitri'
+                    ? 'bg-[#00E0C6] text-[#060B14] shadow'
+                    : 'text-[#6B7A8F] hover:text-[#E8EEF4]'
+                }`}
+              >
+                Maitri
+              </button>
+              <button
+                onClick={() => onStationSelect('bharati')}
+                className={`px-2.5 py-1 rounded font-bold uppercase transition-all cursor-pointer ${
+                  activeStation === 'bharati'
+                    ? 'bg-[#00E0C6] text-[#060B14] shadow'
+                    : 'text-[#6B7A8F] hover:text-[#E8EEF4]'
+                }`}
+              >
+                Bharati
+              </button>
+            </div>
+          )}
+
+          {/* 3D Cinematic Showcase */}
+          {onView3DLanding && (
+            <button
+              onClick={onView3DLanding}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#060B14] hover:bg-[#1A2533] text-[#00E0C6] border border-[#00E0C6]/30 hover:border-[#00E0C6]/60 rounded-lg text-xs font-semibold transition-all cursor-pointer"
+              title="View Interactive 3D Antarctic Cinematic Landing Showcase"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#00E0C6]" />
+              <span>3D Showcase</span>
+            </button>
+          )}
+
+          {/* Enter Dashboard */}
+          <button
+            onClick={() => onEnterDashboard('twin')}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#00E0C6] hover:bg-[#00E0C6]/90 text-[#060B14] rounded-lg text-xs font-bold transition-all shadow-md shadow-[#00E0C6]/20 cursor-pointer"
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Launch Twin</span>
+          </button>
+
+          {/* Log Out */}
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="p-1.5 bg-[#060B14] hover:bg-[#1A2533] text-[#6B7A8F] hover:text-[#FF3B47] border border-[#1A2533] rounded-lg text-xs transition-colors cursor-pointer"
+              title="Sign Out to Login"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+      </header>
+
       {/* Atmospheric background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute -top-32 -left-32 w-[600px] h-[400px] rounded-full bg-[#00E0C6] opacity-[0.04] blur-3xl" />
@@ -144,7 +236,7 @@ export const IndexPage: React.FC<IndexPageProps> = ({
       </div>
 
       {/* HERO */}
-      <section className="relative px-4 sm:px-6 lg:px-12 pt-10 pb-8">
+      <section className="relative px-4 sm:px-6 lg:px-12 pt-8 pb-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center lg:items-start gap-8 lg:gap-12">
 

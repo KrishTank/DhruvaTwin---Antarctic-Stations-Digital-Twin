@@ -13,7 +13,14 @@ import { db } from '../../db/dexieDb';
 import { verifyAuditTrailChain, appendAuditLog } from '../../services/auditService';
 import { CheckCircle2, Copy, Filter, Hash, Key, Lock, RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react';
 
-export const AuditTrailScreen: React.FC = () => {
+import { StationId } from '../../types';
+
+interface AuditTrailScreenProps {
+  activeStation?: StationId;
+  userRole?: string;
+}
+
+export const AuditTrailScreen: React.FC<AuditTrailScreenProps> = ({ activeStation = 'maitri', userRole = 'Admin' }) => {
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [verificationResult, setVerificationResult] = useState<{ isValid: boolean; totalLogs: number } | null>(null);
   const [filterNode, setFilterNode] = useState<string>('ALL');
@@ -93,7 +100,7 @@ export const AuditTrailScreen: React.FC = () => {
           <button
             onClick={handleVerifyChain}
             disabled={isVerifying}
-            className="px-3 py-1.5 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533] flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533] flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-[#00E0C6] ${isVerifying ? 'animate-spin' : ''}`} />
             <span>Verify Chain</span>
@@ -101,7 +108,7 @@ export const AuditTrailScreen: React.FC = () => {
 
           <button
             onClick={handleCreateTestLog}
-            className="px-3 py-1.5 bg-[#00E0C6] hover:bg-[#00E0C6]/90 text-xs font-bold text-[#060B14] rounded transition-colors uppercase tracking-wider"
+            className="px-3 py-1.5 bg-[#00E0C6] hover:bg-[#00E0C6]/90 text-xs font-bold text-[#060B14] rounded transition-colors uppercase tracking-wider cursor-pointer"
           >
             Log Checkpoint
           </button>
@@ -118,7 +125,7 @@ export const AuditTrailScreen: React.FC = () => {
               <button
                 key={node}
                 onClick={() => setFilterNode(node)}
-                className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
+                className={`px-3 py-1 text-xs font-semibold rounded transition-colors cursor-pointer ${
                   filterNode === node
                     ? 'bg-[#00E0C6] text-[#060B14]'
                     : 'bg-[#060B14] text-[#6B7A8F] hover:text-[#E8EEF4]'

@@ -12,7 +12,14 @@ import { IseaExpedition } from '../../types';
 import { db } from '../../db/dexieDb';
 import { Calendar, Compass, Filter, Flag, MapPin, Search, Users } from 'lucide-react';
 
-export const ExpeditionLogsScreen: React.FC = () => {
+import { StationId } from '../../types';
+
+interface ExpeditionLogsScreenProps {
+  activeStation?: StationId;
+  userRole?: string;
+}
+
+export const ExpeditionLogsScreen: React.FC<ExpeditionLogsScreenProps> = ({ activeStation = 'maitri', userRole = 'Admin' }) => {
   const [expeditions, setExpeditions] = useState<IseaExpedition[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStation, setSelectedStation] = useState<string>('ALL');
@@ -67,7 +74,7 @@ export const ExpeditionLogsScreen: React.FC = () => {
             <button
               key={st}
               onClick={() => setSelectedStation(st)}
-              className={`px-3 py-1 text-xs font-semibold rounded transition-colors ${
+              className={`px-3 py-1 text-xs font-semibold rounded transition-colors cursor-pointer ${
                 selectedStation === st
                   ? 'bg-[#00E0C6] text-[#060B14]'
                   : 'bg-[#060B14] text-[#6B7A8F] hover:text-[#E8EEF4]'

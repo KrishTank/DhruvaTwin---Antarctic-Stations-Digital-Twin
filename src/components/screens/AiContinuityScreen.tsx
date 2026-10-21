@@ -15,13 +15,22 @@ import { Activity, AlertOctagon, BrainCircuit, CheckCircle2, Clock, Play, Radio,
 interface AiContinuityScreenProps {
   activeStation: StationId;
   aiState: AiPredictorState;
+  onSimulateDrop?: () => void;
 }
 
-export const AiContinuityScreen: React.FC<AiContinuityScreenProps> = ({ activeStation, aiState }) => {
+export const AiContinuityScreen: React.FC<AiContinuityScreenProps> = ({ 
+  activeStation, 
+  aiState,
+  onSimulateDrop 
+}) => {
   const isBlackout = aiState.status === 'BLACKOUT';
 
   const handleSimulateBlackout = () => {
-    aiPredictor.simulateSatelliteBlackout();
+    if (onSimulateDrop) {
+      onSimulateDrop();
+    } else {
+      aiPredictor.simulateSatelliteBlackout();
+    }
   };
 
   const handleManualEnd = () => {

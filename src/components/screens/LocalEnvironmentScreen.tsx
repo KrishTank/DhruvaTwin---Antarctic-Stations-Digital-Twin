@@ -31,30 +31,36 @@ import {
 
 interface LocalEnvironmentScreenProps {
   activeStation: StationId;
+  isAntarcticMode?: boolean;
 }
 
-export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ activeStation }) => {
+export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ 
+  activeStation,
+  isAntarcticMode = false 
+}) => {
   const [weather, setWeather] = useState<WeatherTelemetry | null>(null);
   const [activeLayer, setActiveLayer] = useState<'velocity' | 'crevasse' | 'elevation'>('velocity');
 
-  // Auto-closing Radar State
+  // Auto-closing Radar State — Default continuous, with optional power-saver simulation
   const [isRadarOpen, setIsRadarOpen] = useState(true);
-  const [autoCloseSeconds, setAutoCloseSeconds] = useState<number | null>(12); // Auto closes in 12s
+  const [autoCloseSeconds, setAutoCloseSeconds] = useState<number | null>(null); // Continuous by default
   const [isAutoClosePaused, setIsAutoClosePaused] = useState(false);
   const [isTacticalModalOpen, setIsTacticalModalOpen] = useState(false);
-  const [tacticalCountdown, setTacticalCountdown] = useState(10);
+  const [tacticalCountdown, setTacticalCountdown] = useState<number | null>(30);
+  const [isTacticalPaused, setIsTacticalPaused] = useState(false);
   const [radarSweepProgress, setRadarSweepProgress] = useState(0);
 
   useEffect(() => {
     fetchStationWeather(activeStation).then(setWeather);
   }, [activeStation]);
 
-  // Main Radar Auto-Close Timer
+  // Main Radar Auto-Close Timer (only when user explicitly enables power saver)
   useEffect(() => {
     if (!isRadarOpen || autoCloseSeconds === null || isAutoClosePaused) return;
 
     if (autoCloseSeconds <= 0) {
       setIsRadarOpen(false);
+      setAutoCloseSeconds(null);
       return;
     }
 
@@ -67,21 +73,21 @@ export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ 
 
   // Tactical Fullscreen Modal Auto-Close Timer
   useEffect(() => {
-    if (!isTacticalModalOpen) return;
+    if (!isTacticalModalOpen || tacticalCountdown === null || isTacticalPaused) return;
 
-    setTacticalCountdown(10);
     const interval = setInterval(() => {
       setTacticalCountdown(prev => {
+        if (prev === null) return null;
         if (prev <= 1) {
-          setIsTacticalModalOpen(false); // Closes on its own!
-          return 0;
+          setIsTacticalModalOpen(false);
+          return null;
         }
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isTacticalModalOpen]);
+  }, [isTacticalModalOpen, tacticalCountdown, isTacticalPaused]);
 
   // Play audio ping for radar
   const playRadarPing = () => {
@@ -247,10 +253,12 @@ export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ 
               <button
                 onClick={() => {
                   setIsTacticalModalOpen(true);
+                  setTacticalCountdown(30);
+                  setIsTacticalPaused(false);
                   playRadarPing();
                 }}
                 className="px-2.5 py-1.5 bg-[#00E0C6]/15 hover:bg-[#00E0C6]/25 text-[#00E0C6] border border-[#00E0C6]/40 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="Open Tactical Radar Scanner (Auto-closes in 10s)"
+                title="Open Tactical Radar Scanner"
               >
                 <Maximize2 className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Tactical Scan</span>
@@ -258,25 +266,46 @@ export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ 
 
               {/* Close / Minimize Radar Button */}
               {isRadarOpen ? (
-                <button
-                  onClick={() => setIsRadarOpen(false)}
-                  className="px-2.5 py-1.5 bg-[#1A2533] hover:bg-[#253347] text-[#E8EEF4] rounded-lg text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
-                  title="Close radar now"
-                >
-                  <Minimize2 className="w-3.5 h-3.5" />
-                  <span>Sleep</span>
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      if (autoCloseSeconds === null) {
+                        setAutoCloseSeconds(15);
+                      } else {
+                        setAutoCloseSeconds(null);
+                      }
+                    }}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1 transition-colors cursor-pointer ${
+                      autoCloseSeconds !== null
+                        ? 'bg-[#FFB020]/20 text-[#FFB020] border border-[#FFB020]/40'
+                        : 'bg-[#060B14] text-[#6B7A8F] border border-[#1A2533] hover:text-[#E8EEF4]'
+                    }`}
+                    title="Simulate autonomous polar power-saver auto-sleep"
+                  >
+                    <Timer className="w-3 h-3" />
+                    <span>{autoCloseSeconds !== null ? `Auto-Sleep: ${autoCloseSeconds}s` : 'Continuous'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => setIsRadarOpen(false)}
+                    className="px-2.5 py-1.5 bg-[#1A2533] hover:bg-[#253347] text-[#E8EEF4] rounded-lg text-xs font-bold flex items-center gap-1 transition-colors cursor-pointer"
+                    title="Minimize radar to sleep mode"
+                  >
+                    <Minimize2 className="w-3.5 h-3.5" />
+                    <span>Sleep</span>
+                  </button>
+                </div>
               ) : (
                 <button
                   onClick={() => {
                     setIsRadarOpen(true);
-                    setAutoCloseSeconds(15);
+                    setAutoCloseSeconds(null);
                     playRadarPing();
                   }}
                   className="px-3 py-1.5 bg-[#00E0C6] text-[#060B14] rounded-lg text-xs font-black flex items-center gap-1.5 shadow-md shadow-[#00E0C6]/20 transition-all cursor-pointer"
                 >
                   <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Wake Radar (15s)</span>
+                  <span>Wake Radar</span>
                 </button>
               )}
             </div>
@@ -532,7 +561,7 @@ export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ 
             <div className="h-1 bg-[#1A2533] w-full overflow-hidden">
               <div 
                 className="h-full bg-gradient-to-r from-[#00E0C6] to-[#FFB020] transition-all duration-1000 ease-linear"
-                style={{ width: `${(tacticalCountdown / 10) * 100}%` }}
+                style={{ width: `${((tacticalCountdown ?? 10) / 10) * 100}%` }}
               />
             </div>
 
@@ -623,18 +652,31 @@ export const LocalEnvironmentScreen: React.FC<LocalEnvironmentScreenProps> = ({ 
             </div>
 
             {/* Modal Footer with Autonomous Action Notice */}
-            <div className="p-4 bg-[#060B14] border-t border-[#1A2533] flex items-center justify-between text-xs">
+            <div className="p-4 bg-[#060B14] border-t border-[#1A2533] flex flex-wrap items-center justify-between gap-3 text-xs">
               <span className="text-[#6B7A8F] flex items-center gap-1.5">
-                <Timer className="w-4 h-4 text-[#00E0C6]" />
-                This radar scanner automatically closes on its own once sweep cycle finishes ({tacticalCountdown}s remaining).
+                <Timer className={`w-4 h-4 ${isTacticalPaused ? 'text-[#FFB020]' : 'text-[#00E0C6]'}`} />
+                {isTacticalPaused
+                  ? 'Autonomous close paused. Scanner active in inspection mode.'
+                  : `Sweep cycle active (${tacticalCountdown ?? 0}s remaining before sleep).`}
               </span>
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setIsTacticalModalOpen(false)}
-                  className="px-4 py-2 bg-[#1A2533] hover:bg-[#253347] text-[#FFFFFF] font-bold rounded-lg transition-colors cursor-pointer"
+                  onClick={() => setIsTacticalPaused(prev => !prev)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold border transition-colors cursor-pointer ${
+                    isTacticalPaused
+                      ? 'bg-[#FFB020]/20 text-[#FFB020] border-[#FFB020]/50'
+                      : 'bg-[#0A121E] text-[#00E0C6] border-[#00E0C6]/30 hover:border-[#00E0C6]'
+                  }`}
                 >
-                  Close Immediately
+                  {isTacticalPaused ? '▶ Resume Timer' : '⏸ Hold Open'}
+                </button>
+
+                <button
+                  onClick={() => setIsTacticalModalOpen(false)}
+                  className="px-4 py-1.5 bg-[#1A2533] hover:bg-[#253347] text-[#FFFFFF] font-bold rounded-lg transition-colors cursor-pointer"
+                >
+                  Close
                 </button>
               </div>
             </div>

@@ -37,6 +37,8 @@ import { AntarcticLanding } from './components/AntarcticLanding/AntarcticLanding
 import { AntarcticLayout } from './components/AntarcticUI/AntarcticLayout';
 import { AntarcticModeProvider } from './components/AntarcticUI/AntarcticModeProvider';
 import { ChatbotDrawer } from './components/ChatbotDrawer';
+import { TelemetryRepairModal } from './components/Twin3D/TelemetryRepairModal';
+import { telemetryRepairService } from './services/telemetryRepairService';
 
 // Icons
 import {
@@ -51,9 +53,11 @@ import {
   FileCheck2,
   Globe2,
   History,
+  Home,
   Layers,
   Lock,
   LogOut,
+  Menu,
   Play,
   Radio,
   RefreshCw,
@@ -61,6 +65,7 @@ import {
   Shield,
   ShieldAlert,
   Snowflake,
+  Sparkles,
   Sun,
   Thermometer,
   UserCheck,
@@ -68,6 +73,8 @@ import {
   Wifi,
   WifiOff,
   Wind,
+  Wrench,
+  X,
   Zap
 } from 'lucide-react';
 
@@ -95,6 +102,11 @@ export default function App() {
   const [userRole, setUserRole] = useState<UserRole>('Admin');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [isTelemetryRepairOpen, setIsTelemetryRepairOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [telemetryFaultCount, setTelemetryFaultCount] = useState<number>(
+    telemetryRepairService.getState().totalFaults
+  );
 
   // Critical Feature 1: Antarctic High-Visibility Mode
   const [isAntarcticMode, setIsAntarcticMode] = useState(false);
@@ -118,6 +130,9 @@ export default function App() {
 
     const unsubAi = aiPredictor.subscribe(setAiState);
     const unsubMqtt = mqttClient.onStatusChange(setMqttStatus);
+    const unsubRepair = telemetryRepairService.subscribe((st) => {
+      setTelemetryFaultCount(st.totalFaults);
+    });
 
     const updateWeather = () => {
       fetchStationWeather(activeStation).then(w => {
@@ -155,6 +170,7 @@ export default function App() {
     return () => {
       unsubAi();
       unsubMqtt();
+      unsubRepair();
       clearInterval(weatherInterval);
       clearInterval(queueInterval);
       window.removeEventListener('keydown', handleKeyDown);
@@ -190,6 +206,7 @@ export default function App() {
           setUserRole(role);
           setAppView('index');
         }}
+        onBackToLanding={() => setAppView('landing')}
       />
     );
   }
@@ -206,6 +223,9 @@ export default function App() {
           if (screen) setCurrentScreen(screen);
           setAppView('dashboard');
         }}
+        onStationSelect={setActiveStation}
+        onView3DLanding={() => setAppView('landing')}
+        onLogout={() => setAppView('login')}
       />
     );
   }
@@ -218,30 +238,44 @@ export default function App() {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* TOP NAVIGATION BAR — ZERO-SLOP STRICT THREE-ZONE CONTRACT    */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <header className="h-16 px-6 bg-[#0A121E]/95 backdrop-blur-md border-b border-[#1A2533] flex items-center justify-between z-30 sticky top-0">
+      <header className="h-16 px-4 md:px-6 bg-[#0A121E]/95 backdrop-blur-md border-b border-[#1A2533] flex items-center justify-between z-30 sticky top-0">
         
         {/* Zone 1: Brand & Mandatory SIH / NCPOR Identity */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00E0C6] to-[#0A121E] p-[1.5px] flex items-center justify-center">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Mobile Navigation Toggle Button */}
+          <button
+            onClick={() => setIsMobileNavOpen(prev => !prev)}
+            className="md:hidden p-2 rounded-lg bg-[#060B14] border border-[#1A2533] text-[#00E0C6] hover:text-[#FFFFFF]"
+            title="Toggle Navigation Menu"
+            aria-label="Toggle Navigation Menu"
+          >
+            {isMobileNavOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+
+          <button
+            onClick={() => setAppView('index')}
+            title="Return to Welcome Hub"
+            className="flex items-center gap-2 group text-left cursor-pointer focus:outline-none"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00E0C6] to-[#0A121E] p-[1.5px] flex items-center justify-center transition-transform group-hover:scale-105">
               <div className="w-full h-full bg-[#060B14] rounded-[7px] flex items-center justify-center">
                 <Globe2 className="w-4 h-4 text-[#00E0C6]" />
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-base font-extrabold uppercase tracking-wider font-heading text-[#FFFFFF]">
+                <span className="text-base font-extrabold uppercase tracking-wider font-heading text-[#FFFFFF] group-hover:text-[#00E0C6] transition-colors">
                   DhruvaTwin
                 </span>
                 <span className="text-[10px] font-mono text-[#00E0C6] bg-[#00E0C6]/10 px-1.5 py-0.5 rounded border border-[#00E0C6]/30">
                   PS ID: 26060
                 </span>
               </div>
-              <div className="text-[10px] text-[#6B7A8F] leading-none">
+              <div className="text-[10px] text-[#6B7A8F] leading-none hidden sm:block">
                 NCPOR · MoES Govt. of India · Team HackFinity007 · SIH 2026
               </div>
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Zone 2: Station Switcher & Central Metrics */}
@@ -285,11 +319,31 @@ export default function App() {
         </div>
 
         {/* Zone 3: AI Blackout Predictor Widget + Antarctic Mode Toggle + User Role */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Quick Portals Links (Hub & 3D Showcase) */}
+          <div className="hidden xl:flex items-center gap-1 border-r border-[#1A2533] pr-2">
+            <button
+              onClick={() => setAppView('index')}
+              title="Return to Welcome Hub"
+              className="px-2 py-1 text-xs text-[#6B7A8F] hover:text-[#00E0C6] hover:bg-[#060B14] rounded transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <Home className="w-3.5 h-3.5" />
+              <span>Hub</span>
+            </button>
+            <button
+              onClick={() => setAppView('landing')}
+              title="Open 3D Cinematic Showcase"
+              className="px-2 py-1 text-xs text-[#6B7A8F] hover:text-[#FFD700] hover:bg-[#060B14] rounded transition-colors flex items-center gap-1 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#FFD700]" />
+              <span>3D Showcase</span>
+            </button>
+          </div>
+
           {/* MANDATORY AI BLACKOUT STATUS WIDGET IN TOP NAV */}
           <div 
             onClick={() => setCurrentScreen('continuity')}
-            className={`cursor-pointer px-3 py-1 rounded-lg border flex flex-col items-end transition-all ${
+            className={`cursor-pointer px-2.5 md:px-3 py-1 rounded-lg border flex flex-col items-end transition-all ${
               aiState.status === 'BLACKOUT'
                 ? 'bg-[#FF3B47]/20 border-[#FF3B47] text-[#FF3B47]'
                 : aiState.minutesUntilDrop <= 5
@@ -297,7 +351,7 @@ export default function App() {
                 : 'bg-[#3EE07F]/10 border-[#3EE07F]/40 text-[#3EE07F]'
             }`}
           >
-            <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-[10px] md:text-[11px] font-bold uppercase tracking-wider">
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
                   aiState.status === 'BLACKOUT' ? 'bg-[#FF3B47]' : 'bg-[#3EE07F]'
@@ -308,14 +362,32 @@ export default function App() {
               </span>
               <span>
                 {aiState.status === 'BLACKOUT'
-                  ? 'Blackout Active'
-                  : `Drop Predicted in ${aiState.minutesUntilDrop} min`}
+                  ? 'Blackout'
+                  : `Drop in ${aiState.minutesUntilDrop}m`}
               </span>
             </div>
-            <span className="text-[10px] text-[#6B7A8F]">
-              {aiState.confidencePct}% confidence · target 95% accuracy
+            <span className="text-[9px] md:text-[10px] text-[#6B7A8F] hidden sm:inline">
+              {aiState.confidencePct}% conf · target 95%
             </span>
           </div>
+
+          {/* Telemetry Autonomous Repair & Fault Injection Engine */}
+          <button
+            onClick={() => setIsTelemetryRepairOpen(true)}
+            title="Telemetry Autonomous Repair & Kalman Filter Engine"
+            className={`relative p-2 rounded-lg border transition-all cursor-pointer ${
+              telemetryFaultCount > 0
+                ? 'bg-[#FF3B47]/15 border-[#FF3B47]/60 text-[#FF3B47] hover:bg-[#FF3B47]/25 animate-pulse'
+                : 'bg-[#060B14] text-[#00E0C6] border-[#1A2533] hover:border-[#00E0C6]'
+            }`}
+          >
+            <Wrench className="w-4 h-4" />
+            {telemetryFaultCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-[#FF3B47] text-[#FFFFFF] text-[9px] font-bold px-1.5 rounded-full border border-[#0A121E]">
+                {telemetryFaultCount}
+              </span>
+            )}
+          </button>
 
           {/* MANDATORY ANTARCTIC MODE TOGGLE (SNOWFLAKE ICON) */}
           <button
@@ -334,7 +406,7 @@ export default function App() {
           <button
             onClick={() => setIsChatbotOpen(true)}
             title="Open Antarctic Operations AI Assistant"
-            className="p-2 bg-[#060B14] hover:bg-slate-800 text-[#00E0C6] rounded-lg border border-[#1A2533] transition-colors"
+            className="p-2 bg-[#060B14] hover:bg-slate-800 text-[#00E0C6] rounded-lg border border-[#1A2533] transition-colors cursor-pointer"
           >
             <Bot className="w-4 h-4" />
           </button>
@@ -342,7 +414,7 @@ export default function App() {
           {/* Role Badge & Auth Modal Opener */}
           <button
             onClick={() => setIsAuthModalOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#060B14] hover:bg-[#0A121E] border border-[#1A2533] rounded-lg text-xs transition-colors"
+            className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 bg-[#060B14] hover:bg-[#0A121E] border border-[#1A2533] rounded-lg text-xs transition-colors cursor-pointer"
           >
             <UserCheck className="w-3.5 h-3.5 text-[#00E0C6]" />
             <span className="font-semibold text-[#E8EEF4]">{userRole}</span>
@@ -353,11 +425,50 @@ export default function App() {
       {/* ───────────────────────────────────────────────────────────── */}
       {/* MAIN LAYOUT: LEFT SIDEBAR + WORKSPACE CONTENT + RIGHT SIDEBAR */}
       {/* ───────────────────────────────────────────────────────────── */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
+
+        {/* Mobile Navigation Backdrop Overlay */}
+        {isMobileNavOpen && (
+          <div
+            onClick={() => setIsMobileNavOpen(false)}
+            className="fixed inset-0 top-16 bg-black/70 backdrop-blur-xs z-30 md:hidden"
+          />
+        )}
 
         {/* LEFT SIDEBAR: ALL 10 DASHBOARD SCREENS + BLACKOUT BUTTON */}
-        <aside className="w-64 bg-[#0A121E] border-r border-[#1A2533] flex flex-col justify-between shrink-0 overflow-y-auto">
+        <aside className={`${
+          isMobileNavOpen
+            ? 'fixed inset-y-16 left-0 z-40 w-72 flex flex-col shadow-2xl'
+            : 'hidden md:flex w-64'
+        } bg-[#0A121E] border-r border-[#1A2533] flex-col justify-between shrink-0 overflow-y-auto transition-all`}>
           <div className="p-4 space-y-4">
+
+            {/* Portals to Landing & Welcome Hub */}
+            <div className="space-y-1 pb-3 border-b border-[#1A2533]">
+              <div className="text-[10px] uppercase font-bold text-[#6B7A8F] tracking-wider px-3 mb-1">
+                Portals & Overviews
+              </div>
+              <button
+                onClick={() => {
+                  setIsMobileNavOpen(false);
+                  setAppView('index');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-[#6B7A8F] hover:text-[#00E0C6] hover:bg-[#060B14] transition-all text-left cursor-pointer"
+              >
+                <Home className="w-4 h-4 shrink-0 text-[#00E0C6]" />
+                <span>Welcome Hub & Tour</span>
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileNavOpen(false);
+                  setAppView('landing');
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium text-[#6B7A8F] hover:text-[#FFD700] hover:bg-[#060B14] transition-all text-left cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 shrink-0 text-[#FFD700]" />
+                <span>3D Cinematic Showcase</span>
+              </button>
+            </div>
             
             {/* Primary Navigation Items */}
             <div className="space-y-1">
@@ -380,8 +491,11 @@ export default function App() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setCurrentScreen(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left ${
+                    onClick={() => {
+                      setCurrentScreen(item.id);
+                      setIsMobileNavOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
                       isActive
                         ? 'bg-[#00E0C6] text-[#060B14] font-bold shadow-md'
                         : 'text-[#6B7A8F] hover:text-[#E8EEF4] hover:bg-[#060B14]'
@@ -401,8 +515,11 @@ export default function App() {
               </div>
 
               <button
-                onClick={() => setCurrentScreen('continuity')}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left ${
+                onClick={() => {
+                  setCurrentScreen('continuity');
+                  setIsMobileNavOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
                   currentScreen === 'continuity'
                     ? 'bg-[#00E0C6] text-[#060B14] font-bold'
                     : 'text-[#6B7A8F] hover:text-[#E8EEF4] hover:bg-[#060B14]'
@@ -416,6 +533,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setCurrentScreen('continuity');
+                  setIsMobileNavOpen(false);
                   aiPredictor.simulateSatelliteBlackout();
                 }}
                 disabled={aiState.isSimulating}
@@ -444,8 +562,11 @@ export default function App() {
                 return (
                   <button
                     key={item.id}
-                    onClick={() => setCurrentScreen(item.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left ${
+                    onClick={() => {
+                      setCurrentScreen(item.id);
+                      setIsMobileNavOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
                       isActive
                         ? 'bg-[#00E0C6] text-[#060B14] font-bold shadow-md'
                         : 'text-[#6B7A8F] hover:text-[#E8EEF4] hover:bg-[#060B14]'
@@ -506,6 +627,7 @@ export default function App() {
           {currentScreen === 'station' && (
             <StationDashboardScreen
               activeStation={activeStation}
+              userRole={userRole}
             />
           )}
 
@@ -532,6 +654,7 @@ export default function App() {
 
           {currentScreen === 'overview' && (
             <AntarcticaOverviewScreen
+              activeStation={activeStation}
               onStationSelect={(st) => {
                 setActiveStation(st);
                 setCurrentScreen('twin');
@@ -707,9 +830,18 @@ export default function App() {
         temperature={stationTemp}
         windSpeed={stationWind}
         blackoutStatus={aiState.status}
+        onOpenTelemetryRepair={() => setIsTelemetryRepairOpen(true)}
       />
 
-      {/* 3. Authentication & Role Switcher Modal */}
+      {/* 3. Autonomous Telemetry Repair & Fault Injector Modal */}
+      {isTelemetryRepairOpen && (
+        <TelemetryRepairModal
+          activeStation={activeStation}
+          onClose={() => setIsTelemetryRepairOpen(false)}
+        />
+      )}
+
+      {/* 4. Authentication & Role Switcher Modal */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0A121E] border border-[#1A2533] rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
@@ -722,7 +854,7 @@ export default function App() {
               </div>
               <button
                 onClick={() => setIsAuthModalOpen(false)}
-                className="text-[#6B7A8F] hover:text-[#E8EEF4]"
+                className="text-[#6B7A8F] hover:text-[#E8EEF4] p-1 rounded cursor-pointer"
               >
                 ✕
               </button>
@@ -743,7 +875,7 @@ export default function App() {
                       }
                       setIsAuthModalOpen(false);
                     }}
-                    className={`p-3 rounded-lg border text-xs font-bold transition-all text-left ${
+                    className={`p-3 rounded-lg border text-xs font-bold transition-all text-left cursor-pointer ${
                       userRole === role
                         ? 'bg-[#00E0C6] text-[#060B14] border-[#00E0C6]'
                         : 'bg-[#060B14] text-[#E8EEF4] border-[#1A2533] hover:border-slate-600'
@@ -768,31 +900,44 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setIsAuthModalOpen(false)}
-                  className="flex-1 py-2 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533]"
+                  className="flex-1 py-2 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533] cursor-pointer"
                 >
                   Google OAuth
                 </button>
                 <button 
                   onClick={() => setIsAuthModalOpen(false)}
-                  className="flex-1 py-2 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533]"
+                  className="flex-1 py-2 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533] cursor-pointer"
                 >
                   GitHub OAuth
                 </button>
                 <button 
                   onClick={() => setIsAuthModalOpen(false)}
-                  className="flex-1 py-2 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533]"
+                  className="flex-1 py-2 bg-[#060B14] hover:bg-slate-800 text-xs font-semibold text-[#E8EEF4] rounded border border-[#1A2533] cursor-pointer"
                 >
                   Email Magic Link
                 </button>
               </div>
             </div>
 
-            <button
-              onClick={() => setIsAuthModalOpen(false)}
-              className="w-full py-2.5 bg-[#00E0C6] hover:bg-[#00E0C6]/90 text-[#060B14] font-bold text-xs rounded transition-colors uppercase tracking-wider"
-            >
-              Confirm Role Access
-            </button>
+            <div className="pt-3 border-t border-[#1A2533] flex items-center justify-between gap-3">
+              <button
+                onClick={() => {
+                  setIsAuthModalOpen(false);
+                  setAppView('login');
+                }}
+                className="flex items-center gap-2 px-3 py-2 bg-[#FF3B47]/10 hover:bg-[#FF3B47]/20 text-[#FF3B47] border border-[#FF3B47]/30 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                title="Log out and return to the login screen"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Log Out</span>
+              </button>
+              <button
+                onClick={() => setIsAuthModalOpen(false)}
+                className="flex-1 py-2 bg-[#00E0C6] hover:bg-[#00E0C6]/90 text-[#060B14] font-bold text-xs rounded-lg transition-colors uppercase tracking-wider cursor-pointer"
+              >
+                Confirm Access
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -11,7 +11,7 @@ export default defineConfig(() => {
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': (import.meta as any).dirname ? path.resolve((import.meta as any).dirname, '.') : path.resolve('.'),
       },
     },
     server: {

@@ -15,6 +15,7 @@ import {
   Snowflake,
   UserCheck,
   AlertCircle,
+  ArrowLeft,
   Eye,
   EyeOff,
 } from 'lucide-react';
@@ -22,6 +23,7 @@ import { UserRole } from '../types';
 
 interface LoginPageProps {
   onLogin: (role: UserRole) => void;
+  onBackToLanding?: () => void;
 }
 
 const DEMO_CREDENTIALS: Array<{ role: UserRole; desc: string; passcode: string }> = [
@@ -32,7 +34,7 @@ const DEMO_CREDENTIALS: Array<{ role: UserRole; desc: string; passcode: string }
   { role: 'User', desc: 'Station personnel read access', passcode: 'user' },
 ];
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBackToLanding }) => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('Admin');
   const [passcode, setPasscode] = useState('');
   const [showPasscode, setShowPasscode] = useState(false);
@@ -91,6 +93,18 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       </div>
 
       <div className="relative w-full max-w-md">
+
+        {onBackToLanding && (
+          <div className="mb-3">
+            <button
+              onClick={onBackToLanding}
+              className="inline-flex items-center gap-1.5 text-xs text-[#00E0C6] hover:text-white transition-colors cursor-pointer font-medium"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Back to 3D Cinematic Showcase</span>
+            </button>
+          </div>
+        )}
 
         {/* Card */}
         <div className="bg-[#0A121E] border border-[#1A2533] rounded-2xl shadow-2xl overflow-hidden">
